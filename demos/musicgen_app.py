@@ -31,7 +31,6 @@ print(IS_BATCHED)
 MAX_BATCH_SIZE = 12
 BATCHED_DURATION = 15
 INTERRUPTING = False
-MBD = None
 # We have to wrap subprocess call to clean a bit the log when using gr.make_waveform
 _old_call = sp.call
 
@@ -96,9 +95,8 @@ def load_model(version='facebook/musicgen-melody'):
 
 def load_diffusion():
     global MBD
-    if MBD is None:
-        print("loading MBD")
-        MBD = MultiBandDiffusion.get_mbd_musicgen()
+    print("loading MBD")
+    MBD = MultiBandDiffusion.get_mbd_musicgen()
 
 
 def _do_predictions(texts, melodies, duration, progress=False, **gen_kwargs):
@@ -233,21 +231,21 @@ def ui_full(launch_kwargs):
                     model = gr.Radio(["facebook/musicgen-melody", "facebook/musicgen-medium", "facebook/musicgen-small",
                                       "facebook/musicgen-large"],
                                      label="Model", value="facebook/musicgen-melody", interactive=True)
-                with gr.Row():
+                with gr.Row(visible=False):
                     decoder = gr.Radio(["Default", "MultiBand_Diffusion"],
                                        label="Decoder", value="Default", interactive=True)
                 with gr.Row():
-                    duration = gr.Slider(minimum=1, maximum=120, value=10, label="Duration", interactive=True)
-                with gr.Row():
+                    duration = gr.Slider(minimum=1, maximum=30, value=5, label="Duration", interactive=True)
+                with gr.Row(visible=False):
                     topk = gr.Number(label="Top-k", value=250, interactive=True)
                     topp = gr.Number(label="Top-p", value=0, interactive=True)
                     temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
                     cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
-                output = gr.Video(label="Generated Music")
+                output = gr.Video(label="Generated Music",visible=False)
                 audio_output = gr.Audio(label="Generated Music (wav)", type='filepath')
-                diffusion_output = gr.Video(label="MultiBand Diffusion Decoder")
-                audio_diffusion = gr.Audio(label="MultiBand Diffusion Decoder (wav)", type='filepath')
+                diffusion_output = gr.Video(label="MultiBand Diffusion Decoder",visible=False)
+                audio_diffusion = gr.Audio(label="MultiBand Diffusion Decoder (wav)", type='filepath',visible=False)
         submit.click(toggle_diffusion, decoder, [diffusion_output, audio_diffusion], queue=False,
                      show_progress=False).then(predict_full, inputs=[model, decoder, text, melody, duration, topk, topp,
                                                                      temperature, cfg_coef],
@@ -291,7 +289,7 @@ def ui_full(launch_kwargs):
                     "Punk rock with loud drum and power guitar",
                     None,
                     "facebook/musicgen-medium",
-                    "MultiBand_Diffusion"
+                    "Default"
                 ],
             ],
             inputs=[text, melody, model, decoder],
