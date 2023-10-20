@@ -1,3 +1,8 @@
+## This is a Fork repo for Text-to-Audio demo purpose. 
+- Changed on the Gradio UI for better customer experience
+- Fix pytorch version to capable with AWS EC2 DeepLearning AMI
+
+
 # AudioCraft
 ![docs badge](https://github.com/facebookresearch/audiocraft/workflows/audiocraft_docs/badge.svg)
 ![linter badge](https://github.com/facebookresearch/audiocraft/workflows/audiocraft_linter/badge.svg)
