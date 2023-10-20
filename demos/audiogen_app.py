@@ -192,7 +192,7 @@ def ui_full(launch_kwargs):
                     submit = gr.Button("Submit")
                     # Adapted from https://github.com/rkfg/audiocraft/blob/long/app.py, MIT license.
                     _ = gr.Button("Interrupt").click(fn=interrupt, queue=False)
-                with gr.Row():
+                with gr.Row(visible=False):
                     model = gr.Radio(["facebook/audiogen-medium"], label="Model", value="facebook/audiogen-medium", interactive=True)
                 with gr.Row(visible=False):
                     decoder = gr.Radio(["Default"], label="Decoder", value="Default", interactive=False)
@@ -202,7 +202,7 @@ def ui_full(launch_kwargs):
                     temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
                     cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
-                output = gr.Video(label="Generated Audio")
+                output = gr.Video(label="Generated Audio",visible=False)
                 audio_output = gr.Audio(label="Generated Audio (wav)", type='filepath')
         submit.click(predict_full, inputs=[model, decoder, text, duration, topk, topp, temperature, cfg_coef], outputs=[output, audio_output])
 

@@ -234,7 +234,7 @@ def ui_full(launch_kwargs):
             with gr.Column():
                 with gr.Row():
                     text = gr.Text(label="Describe your music", interactive=True)
-                    with gr.Column():
+                    with gr.Column(visible=False):
                         radio = gr.Radio(["file", "mic"], value="file",
                                         label="Condition on a melody (optional) File or Mic", visible=False)
                         melody = gr.Audio(source="upload", type="numpy", label="File",
@@ -259,7 +259,7 @@ def ui_full(launch_kwargs):
                     temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
                     cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
-                output = gr.Video(label="Generated Music")
+                output = gr.Video(label="Generated Music", visible=False)
                 audio_output = gr.Audio(label="Generated Music (wav)", type='filepath')
                 diffusion_output = gr.Video(label="MultiBand Diffusion Decoder",visible=False)
                 audio_diffusion = gr.Audio(label="MultiBand Diffusion Decoder (wav)", type='filepath',visible=False)
