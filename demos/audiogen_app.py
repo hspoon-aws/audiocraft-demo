@@ -171,15 +171,23 @@ def ui_full(launch_kwargs):
     with gr.Blocks() as interface:
         gr.Markdown(
             """
-            # AudioGen
-            This is your private demo for [AudioGen](https://github.com/facebookresearch/audiocraft/blob/main/docs/AUDIOGEN.md),
-            a simple and controllable model for audio generation
+            # AudioGen: Text-to-Sound Effect
+
+            Welcome to the Generative AI Event! 
+
+            1. Input Text (Examples can be found at the bottom)
+            2. Click Submit
+            3. Listen!
+            
+            This demo generate 5-30s audio using open source Meta AudioCraft [AudioGen](https://github.com/facebookresearch/audiocraft/blob/main/docs/AUDIOGEN.md)
             """
         )
         with gr.Row():
             with gr.Column():
                 with gr.Row():
-                    text = gr.Text(label="Input Text", interactive=True)
+                    text = gr.Text(label="Describe the sound effect", interactive=True)
+                with gr.Row():
+                    duration = gr.Slider(minimum=1, maximum=30, value=5, label="Duration", interactive=True)
                 with gr.Row():
                     submit = gr.Button("Submit")
                     # Adapted from https://github.com/rkfg/audiocraft/blob/long/app.py, MIT license.
@@ -188,15 +196,13 @@ def ui_full(launch_kwargs):
                     model = gr.Radio(["facebook/audiogen-medium"], label="Model", value="facebook/audiogen-medium", interactive=True)
                 with gr.Row(visible=False):
                     decoder = gr.Radio(["Default"], label="Decoder", value="Default", interactive=False)
-                with gr.Row():
-                    duration = gr.Slider(minimum=1, maximum=30, value=5, label="Duration", interactive=True)
                 with gr.Row(visible=False):
                     topk = gr.Number(label="Top-k", value=250, interactive=True)
                     topp = gr.Number(label="Top-p", value=0, interactive=True)
                     temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
                     cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
-                output = gr.Video(label="Generated Audio",visible=False)
+                output = gr.Video(label="Generated Audio")
                 audio_output = gr.Audio(label="Generated Audio (wav)", type='filepath')
         submit.click(predict_full, inputs=[model, decoder, text, duration, topk, topp, temperature, cfg_coef], outputs=[output, audio_output])
 

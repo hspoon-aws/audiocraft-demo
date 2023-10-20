@@ -206,43 +206,60 @@ def toggle_diffusion(choice):
 
 def ui_full(launch_kwargs):
     with gr.Blocks() as interface:
+        #"
+        #  # MusicGen Demo on AWS
+
+        #  Welcome to TechFest
+        #  This is your private demo for [MusicGen](https://github.com/facebookresearch/audiocraft),
+        #  a simple and controllable model for music generation
+        #  presented at: ["Simple and Controllable Music Generation"](https://huggingface.co/papers/2306.05284)
+        #  """
         gr.Markdown(
             """
-            # MusicGen
-            This is your private demo for [MusicGen](https://github.com/facebookresearch/audiocraft),
-            a simple and controllable model for music generation
-            presented at: ["Simple and Controllable Music Generation"](https://huggingface.co/papers/2306.05284)
+            # MusicGen: Text-to-Music 
+
+            Welcome to the Generative AI Event! 
+
+            1. Input Text (Examples can be found at the bottom)
+            2. Click Submit
+            3. Listen Music!
+            
+            This demo generate 5-30s music using open source Meta AudioCraft [MusicGen](https://github.com/facebookresearch/audiocraft)
             """
+
+            
+            
         )
         with gr.Row():
             with gr.Column():
                 with gr.Row():
-                    text = gr.Text(label="Input Text", interactive=True)
+                    text = gr.Text(label="Describe your music", interactive=True)
                     with gr.Column():
                         radio = gr.Radio(["file", "mic"], value="file",
-                                         label="Condition on a melody (optional) File or Mic")
+                                        label="Condition on a melody (optional) File or Mic", visible=False)
                         melody = gr.Audio(source="upload", type="numpy", label="File",
                                           interactive=True, elem_id="melody-input")
+                with gr.Row():
+                    duration = gr.Slider(minimum=1, maximum=30, value=5, label="Duration", interactive=True)
                 with gr.Row():
                     submit = gr.Button("Submit")
                     # Adapted from https://github.com/rkfg/audiocraft/blob/long/app.py, MIT license.
                     _ = gr.Button("Interrupt").click(fn=interrupt, queue=False)
-                with gr.Row():
+                with gr.Row(visible=False):
                     model = gr.Radio(["facebook/musicgen-melody", "facebook/musicgen-medium", "facebook/musicgen-small",
                                       "facebook/musicgen-large"],
                                      label="Model", value="facebook/musicgen-melody", interactive=True)
                 with gr.Row(visible=False):
                     decoder = gr.Radio(["Default", "MultiBand_Diffusion"],
                                        label="Decoder", value="Default", interactive=True)
-                with gr.Row():
-                    duration = gr.Slider(minimum=1, maximum=30, value=5, label="Duration", interactive=True)
+                
                 with gr.Row(visible=False):
                     topk = gr.Number(label="Top-k", value=250, interactive=True)
                     topp = gr.Number(label="Top-p", value=0, interactive=True)
                     temperature = gr.Number(label="Temperature", value=1.0, interactive=True)
                     cfg_coef = gr.Number(label="Classifier Free Guidance", value=3.0, interactive=True)
             with gr.Column():
-                output = gr.Video(label="Generated Music",visible=False)
+                output = gr.Video(label="Generated Music")
                 audio_output = gr.Audio(label="Generated Music (wav)", type='filepath')
                 diffusion_output = gr.Video(label="MultiBand Diffusion Decoder",visible=False)
                 audio_diffusion = gr.Audio(label="MultiBand Diffusion Decoder (wav)", type='filepath',visible=False)
@@ -270,7 +287,7 @@ def ui_full(launch_kwargs):
                 [
                     "90s rock song with electric guitar and heavy drums",
                     None,
-                    "facebook/musicgen-medium",
+                    "facebook/musicgen-melody",
                     "Default"
                 ],
                 [
@@ -282,13 +299,13 @@ def ui_full(launch_kwargs):
                 [
                     "lofi slow bpm electro chill with organic samples",
                     None,
-                    "facebook/musicgen-medium",
+                    "facebook/musicgen-melody",
                     "Default"
                 ],
                 [
                     "Punk rock with loud drum and power guitar",
                     None,
-                    "facebook/musicgen-medium",
+                    "facebook/musicgen-melody",
                     "Default"
                 ],
             ],
@@ -309,22 +326,15 @@ def ui_full(launch_kwargs):
             An overlap of 12 seconds is kept with the previously generated chunk, and 18 "new" seconds
             are generated each time.
 
-            We present 4 model variations:
+            Model
             1. facebook/musicgen-melody -- a music generation model capable of generating music condition
-                on text and melody inputs. **Note**, you can also use text only.
-            2. facebook/musicgen-small -- a 300M transformer decoder conditioned on text only.
-            3. facebook/musicgen-medium -- a 1.5B transformer decoder conditioned on text only.
-            4. facebook/musicgen-large -- a 3.3B transformer decoder conditioned on text only.
-
-            We also present two way of decoding the audio tokens
-            1. Use the default GAN based compression model
-            2. Use MultiBand Diffusion from (paper linknano )
+                on text and melody inputs. **Note**, you can also use text only..
 
             When using `facebook/musicgen-melody`, you can optionally provide a reference audio from
             which a broad melody will be extracted. The model will then try to follow both
             the description and melody provided.
 
-            You can also use your own GPU or a Google Colab by following the instructions on our repo.
+            You can also use your own GPU or a AWS Sagemaker by following the instructions on our repo.
             See [github.com/facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft)
             for more details.
             """
@@ -356,7 +366,7 @@ def ui_batched(launch_kwargs):
                     text = gr.Text(label="Describe your music", lines=2, interactive=True)
                     with gr.Column():
                         radio = gr.Radio(["file", "mic"], value="file",
-                                         label="Condition on a melody (optional) File or Mic")
+                                        label="Condition on a melody (optional) File or Mic",visible=False)
                         melody = gr.Audio(source="upload", type="numpy", label="File",
                                           interactive=True, elem_id="melody-input")
                 with gr.Row():
@@ -402,7 +412,7 @@ def ui_batched(launch_kwargs):
         The model will then try to follow both the description and melody provided.
         All samples are generated with the `melody` model.
 
-        You can also use your own GPU or a Google Colab by following the instructions on our repo.
+        You can also use your own GPU or a AWS Sagemaker by following the instructions on our repo.
 
         See [github.com/facebookresearch/audiocraft](https://github.com/facebookresearch/audiocraft)
         for more details.
